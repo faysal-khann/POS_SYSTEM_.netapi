@@ -149,7 +149,7 @@ namespace POS_SYSTEM.Application.Services
         public async Task<List<BranchLookupDto>> GetBranchesAsync() =>
             (await _repo.GetBranchesAsync()).Select(b => new BranchLookupDto(b.BranchId, b.BranchName)).ToList();
 
-        public async Task<BranchCreatedResultDto> CreateBranchAsync(BranchCreateDto dto)
+        public async Task<BranchDetailDto> CreateBranchAsync(BranchCreateDto dto)
         {
             var nextCode = await GenerateNextBranchCodeAsync();
 
@@ -161,13 +161,23 @@ namespace POS_SYSTEM.Application.Services
                 ManagerName = dto.ManagerName,
                 Phone = dto.Phone,
                 Address = dto.Address,
-                IsActive = true
+                Email = dto.Email,
+                IsActive = (dto.Status ?? "Active") == "Active"
             };
 
             await _repo.AddBranchAsync(branch);
             await _repo.SaveChangesAsync();
 
-            return new BranchCreatedResultDto(branch.BranchId, branch.BranchName, branch.BranchCode);
+            return new BranchDetailDto(
+                branch.BranchId,
+                branch.BranchCode,
+                branch.BranchName,
+                branch.ManagerName,
+                branch.Phone,
+                branch.Email,
+                branch.Address,
+                (branch.IsActive ?? false) ? "Active" : "Inactive"
+            );
         }
 
         private async Task<string> GenerateNextBranchCodeAsync()

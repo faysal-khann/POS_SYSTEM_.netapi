@@ -79,7 +79,7 @@ namespace POS_SYSTEM.Application.DTOs
         List<PurchaseItemOutDto> Items
     );
 
-    public record BranchCreateDto(int CompanyId, string BranchName, string? ManagerName, string? Phone, string? Address);
+  
     public record BranchCreatedResultDto(int Id, string Name, string? Code);
     public record BranchLookupDto(int Id, string Name);
     public record SizeLookupDto(int Id, string Name);

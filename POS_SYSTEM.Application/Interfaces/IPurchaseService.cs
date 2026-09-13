@@ -15,6 +15,6 @@ namespace POS_SYSTEM.Application.Interfaces
         Task<string> PreviewNextNumberAsync(DateOnly purchaseDate);
         Task<List<SizeLookupDto>> GetSizesAsync();
         Task<List<BranchLookupDto>> GetBranchesAsync();
-        Task<BranchCreatedResultDto> CreateBranchAsync(BranchCreateDto dto);
+        Task<BranchDetailDto> CreateBranchAsync(BranchCreateDto dto);
     }
 }
