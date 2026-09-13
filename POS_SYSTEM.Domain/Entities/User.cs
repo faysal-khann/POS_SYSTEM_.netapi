@@ -50,4 +50,5 @@ public partial class User
     public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
 
     public virtual ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();
+   
 }
