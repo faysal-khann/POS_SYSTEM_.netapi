@@ -1,14 +1,13 @@
-using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using POS_SYSTEM.Api.Serialization;
 using POS_SYSTEM.Application.Interfaces;
 using POS_SYSTEM.Application.Services;
 using POS_SYSTEM.Domain.Interfaces;
-using POS_SYSTEM.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 using POS_SYSTEM.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using POS_SYSTEM.Infrastructure.Repositories;
 using System.Text;
-using POS_SYSTEM.Api.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +40,16 @@ builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<IStockService, StockService>();
+builder.Services.AddScoped<IUnitRepository, UnitRepository>();
+builder.Services.AddScoped<IUnitService, UnitService>();
+builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+builder.Services.AddScoped<ISaleService, SaleService>();
 
 var jwtSecret = builder.Configuration["Jwt:SecretKey"] ?? "dev-only-fallback-change-me";
 

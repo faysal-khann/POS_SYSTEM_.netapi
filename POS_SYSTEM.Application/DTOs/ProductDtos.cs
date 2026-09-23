@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace POS_SYSTEM.Application.DTOs;
 
-public record LookupDto(int Id, string Name);
+public record LookupDto(
+    [property: JsonPropertyName("id")] int Id,
+    [property: JsonPropertyName("name")] string Name
+);
 
 public record ProductCreateDto(
     string ProductName,
