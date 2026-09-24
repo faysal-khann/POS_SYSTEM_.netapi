@@ -7,35 +7,45 @@ public partial class Sale
 {
     public int SaleId { get; set; }
 
+    public int CompanyId { get; set; }
+
     public int BranchId { get; set; }
 
     public int? CustomerId { get; set; }
+
+    public int UserId { get; set; }
 
     public string InvoiceNo { get; set; } = null!;
 
     public DateTime SaleDate { get; set; }
 
-    public decimal SubTotal { get; set; }
+    public string? PriceType { get; set; }
 
-    public decimal Discount { get; set; }
+    public decimal? SubTotal { get; set; }
 
-    public decimal TaxAmount { get; set; }
+    public decimal? DiscountAmount { get; set; }
 
-    public decimal TotalAmount { get; set; }
+    public decimal? TaxAmount { get; set; }
 
-    public decimal PaidAmount { get; set; }
+    public decimal? GrandTotal { get; set; }
 
-    public decimal ChangeAmount { get; set; }
+    public string? PaymentMethod { get; set; }
 
-    public string PaymentMethod { get; set; } = null!;
+    public decimal? ReceivedAmount { get; set; }
+
+    public decimal? ChangeAmount { get; set; }
 
     public string Status { get; set; } = null!;
 
-    public int CashierId { get; set; }
+    public DateTime? CreatedAt { get; set; }
+
+    public string PaymentStatus { get; set; } = null!;
+
+    public string? ParkName { get; set; }
 
     public virtual Branch Branch { get; set; } = null!;
 
-    public virtual User Cashier { get; set; } = null!;
+    public virtual Company Company { get; set; } = null!;
 
     public virtual Customer? Customer { get; set; }
 
@@ -44,4 +54,6 @@ public partial class Sale
     public virtual ICollection<SaleItem> SaleItems { get; set; } = new List<SaleItem>();
 
     public virtual ICollection<SaleReturn> SaleReturns { get; set; } = new List<SaleReturn>();
+
+    public virtual User User { get; set; } = null!;
 }

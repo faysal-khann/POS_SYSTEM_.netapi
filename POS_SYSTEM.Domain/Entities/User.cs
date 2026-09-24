@@ -39,7 +39,13 @@ public partial class User
 
     public virtual ICollection<ActivityLog> ActivityLogs { get; set; } = new List<ActivityLog>();
 
+    public virtual ICollection<CashierShift> CashierShiftClosedByUsers { get; set; } = new List<CashierShift>();
+
+    public virtual ICollection<CashierShift> CashierShiftUsers { get; set; } = new List<CashierShift>();
+
     public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+
+    public virtual ICollection<LoyaltyTransaction> LoyaltyTransactions { get; set; } = new List<LoyaltyTransaction>();
 
     public virtual Branch PrimaryBranch { get; set; } = null!;
 
@@ -50,5 +56,4 @@ public partial class User
     public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
 
     public virtual ICollection<UserPermission> UserPermissions { get; set; } = new List<UserPermission>();
-   
 }

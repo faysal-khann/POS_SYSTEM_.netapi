@@ -32,4 +32,6 @@ public partial class Company
     public virtual ICollection<Branch> Branches { get; set; } = new List<Branch>();
 
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
+
+    public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
 }

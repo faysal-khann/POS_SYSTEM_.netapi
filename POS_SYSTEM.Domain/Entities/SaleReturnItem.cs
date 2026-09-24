@@ -5,13 +5,13 @@ namespace POS_SYSTEM.Domain.Entities;
 
 public partial class SaleReturnItem
 {
-    public int ReturnItemId { get; set; }
+    public int SaleReturnItemId { get; set; }
 
-    public int ReturnId { get; set; }
+    public int SaleReturnId { get; set; }
 
     public int ProductId { get; set; }
 
-    public decimal Qty { get; set; }
+    public decimal ReturnQty { get; set; }
 
     public decimal UnitPrice { get; set; }
 
@@ -19,5 +19,5 @@ public partial class SaleReturnItem
 
     public virtual Product Product { get; set; } = null!;
 
-    public virtual SaleReturn Return { get; set; } = null!;
+    public virtual SaleReturn SaleReturn { get; set; } = null!;
 }

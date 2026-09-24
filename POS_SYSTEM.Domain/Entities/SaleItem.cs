@@ -15,9 +15,9 @@ public partial class SaleItem
 
     public decimal UnitPrice { get; set; }
 
-    public decimal Discount { get; set; }
+    public decimal? DiscountPercent { get; set; }
 
-    public decimal TaxRate { get; set; }
+    public decimal? TaxPercent { get; set; }
 
     public decimal LineTotal { get; set; }
 

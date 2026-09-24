@@ -5,23 +5,41 @@ namespace POS_SYSTEM.Domain.Entities;
 
 public partial class SaleReturn
 {
-    public int ReturnId { get; set; }
+    public int SaleReturnId { get; set; }
 
-    public int SaleId { get; set; }
+    public int OriginalSaleId { get; set; }
 
-    public string ReturnNo { get; set; } = null!;
+    public string ReturnType { get; set; } = null!;
+
+    public int CompanyId { get; set; }
+
+    public int BranchId { get; set; }
+
+    public int? CustomerId { get; set; }
+
+    public int UserId { get; set; }
 
     public DateTime ReturnDate { get; set; }
 
-    public decimal TotalAmount { get; set; }
+    public string? Reason { get; set; }
 
-    public string RefundMethod { get; set; } = null!;
+    public string? Note { get; set; }
 
-    public int CreatedBy { get; set; }
+    public decimal SubTotal { get; set; }
 
-    public virtual User CreatedByNavigation { get; set; } = null!;
+    public decimal TaxAmount { get; set; }
 
-    public virtual Sale Sale { get; set; } = null!;
+    public decimal GrandTotal { get; set; }
+
+    public string? RefundMethod { get; set; }
+
+    public decimal ReceivedAmount { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public virtual Sale OriginalSale { get; set; } = null!;
 
     public virtual ICollection<SaleReturnItem> SaleReturnItems { get; set; } = new List<SaleReturnItem>();
+
+    public virtual User User { get; set; } = null!;
 }

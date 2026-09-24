@@ -192,7 +192,7 @@ public class SaleService : ISaleService
         var sale = await _repo.GetHeldByIdAsync(saleId);
         if (sale is null) return null;
 
-        var items = sale.Items.Select(i => new SaleItemDetailDto(
+        var items = sale.SaleItems.Select(i => new SaleItemDetailDto(
             i.ProductId, i.Product?.ProductName ?? "—", i.Qty, i.UnitPrice, i.DiscountPercent, i.TaxPercent
         )).ToList();
 
@@ -225,7 +225,7 @@ public class SaleService : ISaleService
 
         var cashier = await _repo.GetUserByIdAsync(sale.UserId);
 
-        var items = sale.Items.Select(i => new SaleItemDraftDetailDto(
+        var items = sale.SaleItems.Select(i => new SaleItemDraftDetailDto(
             i.ProductId, i.Product?.ProductName ?? "—", i.Qty, i.UnitPrice,
             i.DiscountPercent ?? 0, i.TaxPercent ?? 0, i.LineTotal
         )).ToList();

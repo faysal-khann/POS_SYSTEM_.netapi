@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+//using POS_SYSTEM.Infrastructure.Persistence.Entities;
 using POS_SYSTEM.Domain.Entities;
-
 namespace POS_SYSTEM.Infrastructure.Persistence;
 
 public partial class AppDbContext : DbContext
@@ -23,6 +23,8 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<Branch> Branches { get; set; }
 
     public virtual DbSet<Brand> Brands { get; set; }
+
+    public virtual DbSet<CashierShift> CashierShifts { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
 
@@ -167,6 +169,47 @@ public partial class AppDbContext : DbContext
                 .HasDefaultValue("Active");
         });
 
+        modelBuilder.Entity<CashierShift>(entity =>
+        {
+            entity.HasKey(e => e.ShiftId).HasName("PK__CashierS__C0A838E164F0AE15");
+
+            entity.Property(e => e.ShiftId).HasColumnName("ShiftID");
+            entity.Property(e => e.ActualClosing).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.BranchId).HasColumnName("BranchID");
+            entity.Property(e => e.CalculatedClosing).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.CashRefunds).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.CashSales).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.ClosedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.ClosedByUserId).HasColumnName("ClosedByUserID");
+            entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+            entity.Property(e => e.Difference).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.NetSales).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Note).HasMaxLength(500);
+            entity.Property(e => e.OpeningBalance).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.ShiftName).HasMaxLength(50);
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Closed");
+            entity.Property(e => e.TotalReceived).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TotalReturns).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TotalSales).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.ClosedByUser).WithMany(p => p.CashierShiftClosedByUsers)
+                .HasForeignKey(d => d.ClosedByUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CashierSh__Close__6D9742D9");
+
+            entity.HasOne(d => d.User).WithMany(p => p.CashierShiftUsers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CashierSh__UserI__6CA31EA0");
+        });
+
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.CategoryId).HasName("PK__Categori__19093A2BA85EF0CC");
@@ -267,72 +310,86 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Expense>(entity =>
         {
-            entity.HasIndex(e => e.BranchId, "IX_Expenses_BranchID");
-
-            entity.HasIndex(e => e.ExpenseCategoryId, "IX_Expenses_ExpenseCategoryID");
-
-            entity.HasIndex(e => e.ExpenseDate, "IX_Expenses_ExpenseDate");
+            entity.HasKey(e => e.ExpenseId).HasName("PK__Expenses__1445CFF303F18425");
 
             entity.Property(e => e.ExpenseId).HasColumnName("ExpenseID");
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.BranchId).HasColumnName("BranchID");
-            entity.Property(e => e.Description).HasMaxLength(300);
-            entity.Property(e => e.ExpenseCategoryId).HasColumnName("ExpenseCategoryID");
-            entity.Property(e => e.ExpenseDate).HasDefaultValueSql("(CONVERT([date],sysutcdatetime()))", "DF_Expenses_ExpenseDate");
+            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.ExpenseNo).HasMaxLength(30);
+            entity.Property(e => e.Note).HasMaxLength(500);
             entity.Property(e => e.PaymentMethod).HasMaxLength(30);
             entity.Property(e => e.ReferenceNo).HasMaxLength(50);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Completed", "DF_Expenses_Status");
+            entity.Property(e => e.SupplierId).HasColumnName("SupplierID");
 
             entity.HasOne(d => d.Branch).WithMany(p => p.Expenses)
                 .HasForeignKey(d => d.BranchId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Expenses_Branch");
+                .HasConstraintName("FK_Expenses_Branches");
+
+            entity.HasOne(d => d.Category).WithMany(p => p.Expenses)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Expenses_Categories");
 
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.Expenses)
                 .HasForeignKey(d => d.CreatedBy)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Expenses_CreatedBy");
+                .HasConstraintName("FK_Expenses_Users");
 
-            entity.HasOne(d => d.ExpenseCategory).WithMany(p => p.Expenses)
-                .HasForeignKey(d => d.ExpenseCategoryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Expenses_Category");
+            entity.HasOne(d => d.Supplier).WithMany(p => p.Expenses)
+                .HasForeignKey(d => d.SupplierId)
+                .HasConstraintName("FK_Expenses_Suppliers");
         });
 
         modelBuilder.Entity<ExpenseCategory>(entity =>
         {
+            entity.HasKey(e => e.CategoryId).HasName("PK__ExpenseC__19093A2B4E9D280C");
+
             entity.HasIndex(e => e.CategoryName, "UQ_ExpenseCategories_Name").IsUnique();
 
-            entity.Property(e => e.ExpenseCategoryId).HasColumnName("ExpenseCategoryID");
+            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
             entity.Property(e => e.CategoryName).HasMaxLength(100);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValue("Active");
         });
 
         modelBuilder.Entity<LoyaltyTransaction>(entity =>
         {
-            entity.HasKey(e => e.LoyaltyId);
+            entity.HasKey(e => e.LoyaltyTransactionId).HasName("PK__LoyaltyT__5CFDF914C932ADD6");
 
-            entity.HasIndex(e => e.CreatedAt, "IX_LoyaltyTransactions_CreatedAt");
+            entity.HasIndex(e => e.CustomerId, "IX_LoyaltyTransactions_Customer");
 
-            entity.HasIndex(e => e.CustomerId, "IX_LoyaltyTransactions_CustomerID");
-
-            entity.HasIndex(e => e.SaleId, "IX_LoyaltyTransactions_SaleID");
-
-            entity.Property(e => e.LoyaltyId).HasColumnName("LoyaltyID");
+            entity.Property(e => e.LoyaltyTransactionId).HasColumnName("LoyaltyTransactionID");
             entity.Property(e => e.CreatedAt)
-                .HasPrecision(3)
-                .HasDefaultValueSql("(sysutcdatetime())", "DF_LoyaltyTransactions_CreatedAt");
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserID");
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
-            entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.RefNo).HasMaxLength(30);
             entity.Property(e => e.SaleId).HasColumnName("SaleID");
             entity.Property(e => e.TransactionType).HasMaxLength(20);
+
+            entity.HasOne(d => d.CreatedByUser).WithMany(p => p.LoyaltyTransactions)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .HasConstraintName("FK__LoyaltyTr__Creat__7DCDAAA2");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.LoyaltyTransactions)
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_LoyaltyTransactions_Customer");
+                .HasConstraintName("FK__LoyaltyTr__Custo__7BE56230");
 
             entity.HasOne(d => d.Sale).WithMany(p => p.LoyaltyTransactions)
                 .HasForeignKey(d => d.SaleId)
-                .HasConstraintName("FK_LoyaltyTransactions_Sale");
+                .HasConstraintName("FK__LoyaltyTr__SaleI__7CD98669");
         });
 
         modelBuilder.Entity<Permission>(entity =>
@@ -545,130 +602,130 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<Sale>(entity =>
         {
-            entity.HasIndex(e => e.BranchId, "IX_Sales_BranchID");
-
-            entity.HasIndex(e => e.CashierId, "IX_Sales_CashierID");
-
-            entity.HasIndex(e => e.CustomerId, "IX_Sales_CustomerID");
-
-            entity.HasIndex(e => e.SaleDate, "IX_Sales_SaleDate");
+            entity.HasKey(e => e.SaleId).HasName("PK__Sales__1EE3C41F157796E5");
 
             entity.HasIndex(e => e.InvoiceNo, "UQ_Sales_InvoiceNo").IsUnique();
 
             entity.Property(e => e.SaleId).HasColumnName("SaleID");
             entity.Property(e => e.BranchId).HasColumnName("BranchID");
-            entity.Property(e => e.CashierId).HasColumnName("CashierID");
             entity.Property(e => e.ChangeAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
-            entity.Property(e => e.Discount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.InvoiceNo).HasMaxLength(30);
-            entity.Property(e => e.PaidAmount).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.PaymentMethod).HasMaxLength(30);
-            entity.Property(e => e.SaleDate)
-                .HasPrecision(3)
-                .HasDefaultValueSql("(sysutcdatetime())", "DF_Sales_SaleDate");
+            entity.Property(e => e.ParkName).HasMaxLength(100);
+            entity.Property(e => e.PaymentMethod).HasMaxLength(20);
+            entity.Property(e => e.PaymentStatus)
+                .HasMaxLength(20)
+                .HasDefaultValue("Paid");
+            entity.Property(e => e.PriceType).HasMaxLength(30);
+            entity.Property(e => e.ReceivedAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.SaleDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
-                .HasDefaultValue("Completed", "DF_Sales_Status");
+                .HasDefaultValue("Completed");
             entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.TaxAmount).HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.Branch).WithMany(p => p.Sales)
                 .HasForeignKey(d => d.BranchId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Sales_Branch");
+                .HasConstraintName("FK_Sales_Branches");
 
-            entity.HasOne(d => d.Cashier).WithMany(p => p.Sales)
-                .HasForeignKey(d => d.CashierId)
+            entity.HasOne(d => d.Company).WithMany(p => p.Sales)
+                .HasForeignKey(d => d.CompanyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Sales_Cashier");
+                .HasConstraintName("FK_Sales_Companies");
 
             entity.HasOne(d => d.Customer).WithMany(p => p.Sales)
                 .HasForeignKey(d => d.CustomerId)
-                .HasConstraintName("FK_Sales_Customer");
+                .HasConstraintName("FK_Sales_Customers");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Sales)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Sales_Users");
         });
 
         modelBuilder.Entity<SaleItem>(entity =>
         {
-            entity.HasIndex(e => e.ProductId, "IX_SaleItems_ProductID");
-
-            entity.HasIndex(e => e.SaleId, "IX_SaleItems_SaleID");
+            entity.HasKey(e => e.SaleItemId).HasName("PK__SaleItem__C6059461F8A9D0AA");
 
             entity.Property(e => e.SaleItemId).HasColumnName("SaleItemID");
-            entity.Property(e => e.Discount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.DiscountPercent).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.LineTotal).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.Qty)
-                .HasDefaultValue(1m, "DF_SaleItems_Qty")
-                .HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Qty).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.SaleId).HasColumnName("SaleID");
-            entity.Property(e => e.TaxRate).HasColumnType("decimal(5, 2)");
+            entity.Property(e => e.TaxPercent).HasColumnType("decimal(5, 2)");
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.Product).WithMany(p => p.SaleItems)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SaleItems_Product");
+                .HasConstraintName("FK_SaleItems_Products");
 
             entity.HasOne(d => d.Sale).WithMany(p => p.SaleItems)
                 .HasForeignKey(d => d.SaleId)
-                .HasConstraintName("FK_SaleItems_Sale");
+                .HasConstraintName("FK_SaleItems_Sales");
         });
 
         modelBuilder.Entity<SaleReturn>(entity =>
         {
-            entity.HasKey(e => e.ReturnId);
+            entity.HasKey(e => e.SaleReturnId).HasName("PK__SaleRetu__2CB01EE247103E4E");
 
-            entity.HasIndex(e => e.SaleId, "IX_SaleReturns_SaleID");
+            entity.Property(e => e.SaleReturnId).HasColumnName("SaleReturnID");
+            entity.Property(e => e.BranchId).HasColumnName("BranchID");
+            entity.Property(e => e.CompanyId).HasColumnName("CompanyID");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+            entity.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.Note).HasMaxLength(500);
+            entity.Property(e => e.OriginalSaleId).HasColumnName("OriginalSaleID");
+            entity.Property(e => e.Reason).HasMaxLength(50);
+            entity.Property(e => e.ReceivedAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.RefundMethod).HasMaxLength(20);
+            entity.Property(e => e.ReturnDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.ReturnType)
+                .HasMaxLength(20)
+                .HasDefaultValue("Sales Return");
+            entity.Property(e => e.SubTotal).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.TaxAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasIndex(e => e.ReturnNo, "UQ_SaleReturns_ReturnNo").IsUnique();
-
-            entity.Property(e => e.ReturnId).HasColumnName("ReturnID");
-            entity.Property(e => e.RefundMethod).HasMaxLength(30);
-            entity.Property(e => e.ReturnDate)
-                .HasPrecision(3)
-                .HasDefaultValueSql("(sysutcdatetime())", "DF_SaleReturns_ReturnDate");
-            entity.Property(e => e.ReturnNo).HasMaxLength(30);
-            entity.Property(e => e.SaleId).HasColumnName("SaleID");
-            entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)");
-
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.SaleReturns)
-                .HasForeignKey(d => d.CreatedBy)
+            entity.HasOne(d => d.OriginalSale).WithMany(p => p.SaleReturns)
+                .HasForeignKey(d => d.OriginalSaleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SaleReturns_CreatedBy");
+                .HasConstraintName("FK_SaleReturns_Sales");
 
-            entity.HasOne(d => d.Sale).WithMany(p => p.SaleReturns)
-                .HasForeignKey(d => d.SaleId)
+            entity.HasOne(d => d.User).WithMany(p => p.SaleReturns)
+                .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SaleReturns_Sale");
+                .HasConstraintName("FK_SaleReturns_Users");
         });
 
         modelBuilder.Entity<SaleReturnItem>(entity =>
         {
-            entity.HasKey(e => e.ReturnItemId);
+            entity.HasKey(e => e.SaleReturnItemId).HasName("PK__SaleRetu__66B479E12ECC897B");
 
-            entity.HasIndex(e => e.ProductId, "IX_SaleReturnItems_ProductID");
-
-            entity.HasIndex(e => e.ReturnId, "IX_SaleReturnItems_ReturnID");
-
-            entity.Property(e => e.ReturnItemId).HasColumnName("ReturnItemID");
+            entity.Property(e => e.SaleReturnItemId).HasColumnName("SaleReturnItemID");
             entity.Property(e => e.LineTotal).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.Qty)
-                .HasDefaultValue(1m, "DF_SaleReturnItems_Qty")
-                .HasColumnType("decimal(18, 2)");
-            entity.Property(e => e.ReturnId).HasColumnName("ReturnID");
+            entity.Property(e => e.ReturnQty).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.SaleReturnId).HasColumnName("SaleReturnID");
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.Product).WithMany(p => p.SaleReturnItems)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_SaleReturnItems_Product");
+                .HasConstraintName("FK_SaleReturnItems_Products");
 
-            entity.HasOne(d => d.Return).WithMany(p => p.SaleReturnItems)
-                .HasForeignKey(d => d.ReturnId)
-                .HasConstraintName("FK_SaleReturnItems_Return");
+            entity.HasOne(d => d.SaleReturn).WithMany(p => p.SaleReturnItems)
+                .HasForeignKey(d => d.SaleReturnId)
+                .HasConstraintName("FK_SaleReturnItems_SaleReturns");
         });
 
         modelBuilder.Entity<Size>(entity =>

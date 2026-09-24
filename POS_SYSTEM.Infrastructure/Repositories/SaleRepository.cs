@@ -81,20 +81,20 @@ public class SaleRepository : ISaleRepository
         await _context.Sales.FirstOrDefaultAsync(s => s.SaleId == saleId);
 
     public async Task<Sale?> GetByIdWithItemsAsync(int saleId) =>
-        await _context.Sales.Include(s => s.Items).FirstOrDefaultAsync(s => s.SaleId == saleId);
+        await _context.Sales.Include(s => s.SaleItems).FirstOrDefaultAsync(s => s.SaleId == saleId);
 
     public async Task<Sale?> GetByIdWithItemsAndCustomerAsync(int saleId) =>
-        await _context.Sales.Include(s => s.Items).Include(s => s.Customer)
+        await _context.Sales.Include(s => s.SaleItems).Include(s => s.Customer)
             .FirstOrDefaultAsync(s => s.SaleId == saleId);
 
     public async Task<Sale?> GetHeldByIdAsync(int saleId) =>
         await _context.Sales
-            .Include(s => s.Items).ThenInclude(i => i.Product)
+            .Include(s => s.SaleItems).ThenInclude(i => i.Product)
             .FirstOrDefaultAsync(s => s.SaleId == saleId && s.Status == "Held");
 
     public async Task<Sale?> GetDraftByIdAsync(int saleId) =>
         await _context.Sales
-            .Include(s => s.Items).ThenInclude(i => i.Product)
+            .Include(s => s.SaleItems).ThenInclude(i => i.Product)
             .Include(s => s.Customer)
             .FirstOrDefaultAsync(s => s.SaleId == saleId && s.Status == "Draft");
 

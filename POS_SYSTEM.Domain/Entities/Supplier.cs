@@ -45,5 +45,7 @@ public partial class Supplier
 
     public string? Notes { get; set; }
 
+    public virtual ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }

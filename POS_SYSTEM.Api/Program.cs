@@ -51,6 +51,12 @@ builder.Services.AddScoped<IUnitService, UnitService>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 
+builder.Services.AddScoped<ISaleReturnRepository, SaleReturnRepository>();
+builder.Services.AddScoped<ISaleReturnService, SaleReturnService>();
+
+
+
+
 var jwtSecret = builder.Configuration["Jwt:SecretKey"] ?? "dev-only-fallback-change-me";
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
