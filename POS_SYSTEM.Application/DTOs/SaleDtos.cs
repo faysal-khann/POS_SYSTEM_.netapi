@@ -17,6 +17,7 @@ public record SaleCreateDto(
     decimal? ChangeAmount,
     string? Status,
     string? ParkName,
+    int? PointsToRedeem,
     List<SaleItemCreateDto> Items,
     DateTime? SaleDate,
     string? PaymentStatus

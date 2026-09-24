@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-//using POS_SYSTEM.Infrastructure.Persistence.Entities;
-using POS_SYSTEM.Domain.Entities;
+using POS_SYSTEM.Infrastructure.Persistence.Entities;
+
 namespace POS_SYSTEM.Infrastructure.Persistence;
 
 public partial class AppDbContext : DbContext
@@ -312,6 +312,8 @@ public partial class AppDbContext : DbContext
         {
             entity.HasKey(e => e.ExpenseId).HasName("PK__Expenses__1445CFF303F18425");
 
+            entity.HasIndex(e => e.ExpenseNo, "UQ_Expenses_ExpenseNo").IsUnique();
+
             entity.Property(e => e.ExpenseId).HasColumnName("ExpenseID");
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.BranchId).HasColumnName("BranchID");
@@ -325,7 +327,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.ReferenceNo).HasMaxLength(50);
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
-                .HasDefaultValue("Completed", "DF_Expenses_Status");
+                .HasDefaultValue("Paid");
             entity.Property(e => e.SupplierId).HasColumnName("SupplierID");
 
             entity.HasOne(d => d.Branch).WithMany(p => p.Expenses)
@@ -615,6 +617,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.InvoiceNo).HasMaxLength(30);
+            entity.Property(e => e.LoyaltyDiscountAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.ParkName).HasMaxLength(100);
             entity.Property(e => e.PaymentMethod).HasMaxLength(20);
             entity.Property(e => e.PaymentStatus)

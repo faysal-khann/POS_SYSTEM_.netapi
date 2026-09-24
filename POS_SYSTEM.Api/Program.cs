@@ -53,8 +53,10 @@ builder.Services.AddScoped<ISaleService, SaleService>();
 
 builder.Services.AddScoped<ISaleReturnRepository, SaleReturnRepository>();
 builder.Services.AddScoped<ISaleReturnService, SaleReturnService>();
-
-
+builder.Services.AddScoped<ILoyaltyRepository, LoyaltyRepository>();
+builder.Services.AddScoped<ILoyaltyService, LoyaltyService>();
+builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
 
 
 var jwtSecret = builder.Configuration["Jwt:SecretKey"] ?? "dev-only-fallback-change-me";

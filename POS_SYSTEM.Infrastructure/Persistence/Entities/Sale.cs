@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace POS_SYSTEM.Domain.Entities;
+namespace POS_SYSTEM.Infrastructure.Persistence.Entities;
 
 public partial class Sale
 {
@@ -21,19 +21,19 @@ public partial class Sale
 
     public string? PriceType { get; set; }
 
-    public decimal? SubTotal { get; set; }
+    public decimal SubTotal { get; set; }
 
-    public decimal? DiscountAmount { get; set; }
+    public decimal DiscountAmount { get; set; }
 
-    public decimal? TaxAmount { get; set; }
+    public decimal TaxAmount { get; set; }
 
-    public decimal? GrandTotal { get; set; }
+    public decimal GrandTotal { get; set; }
 
     public string? PaymentMethod { get; set; }
 
-    public decimal? ReceivedAmount { get; set; }
+    public decimal ReceivedAmount { get; set; }
 
-    public decimal? ChangeAmount { get; set; }
+    public decimal ChangeAmount { get; set; }
 
     public string Status { get; set; } = null!;
 
@@ -43,15 +43,17 @@ public partial class Sale
 
     public string? ParkName { get; set; }
 
+    public int LoyaltyPointsEarned { get; set; }
+
+    public int LoyaltyPointsRedeemed { get; set; }
+
+    public decimal LoyaltyDiscountAmount { get; set; }
+
     public virtual Branch Branch { get; set; } = null!;
 
     public virtual Company Company { get; set; } = null!;
 
     public virtual Customer? Customer { get; set; }
-
-    public int? PointsEarned { get; set; }
-    public int? PointsRedeemed { get; set; }
-    public decimal? RedeemedAmount { get; set; }
 
     public virtual ICollection<LoyaltyTransaction> LoyaltyTransactions { get; set; } = new List<LoyaltyTransaction>();
 

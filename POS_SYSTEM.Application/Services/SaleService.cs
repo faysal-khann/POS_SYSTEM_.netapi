@@ -9,8 +9,13 @@ namespace POS_SYSTEM.Application.Services;
 public class SaleService : ISaleService
 {
     private readonly ISaleRepository _repo;
+    private readonly ILoyaltyRepository _loyaltyRepo;
 
-    public SaleService(ISaleRepository repo) => _repo = repo;
+    public SaleService(ISaleRepository repo, ILoyaltyRepository loyaltyRepo)
+    {
+        _repo = repo;
+        _loyaltyRepo = loyaltyRepo;
+    }
 
     private async Task<string> GenerateInvoiceNoAsync()
     {
@@ -135,6 +140,87 @@ public class SaleService : ISaleService
         }
 
         await _repo.SaveChangesAsync();
+        // =========================================================
+        // LOYALTY POINT REDEMPTION
+        // =========================================================
+
+        if (status == "Completed"
+            && dto.CustomerId.HasValue
+            && (dto.PointsToRedeem ?? 0) > 0)
+        {
+            var customerId = dto.CustomerId.Value;
+            var requestedPoints = dto.PointsToRedeem!.Value;
+
+            // Get the customer's current available points.
+            var available = await _loyaltyRepo.GetAvailablePointsAsync(customerId);
+
+            // Never allow redemption to make the balance negative.
+            if (requestedPoints > available)
+            {
+                throw new BadRequestAppException(
+                    $"Customer does not have enough loyalty points. " +
+                    $"Available: {available}, Requested: {requestedPoints}.");
+            }
+
+            if (requestedPoints > 0)
+            {
+                sale.PointsRedeemed = requestedPoints;
+                sale.RedeemedAmount = requestedPoints;
+
+                await _loyaltyRepo.AddTransactionAsync(new LoyaltyTransaction
+                {
+                    CustomerId = customerId,
+                    SaleId = sale.SaleId,
+                    RefNo = sale.InvoiceNo,
+                    TransactionType = "Redeem",
+                    Points = requestedPoints,
+                    Description = $"Redeemed on {sale.InvoiceNo}",
+                    CreatedByUserId = dto.UserId,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+        }
+
+        // =========================================================
+        // LOYALTY POINT EARNING
+        // =========================================================
+
+        if (status == "Completed" && dto.CustomerId.HasValue)
+        {
+            var netPaid =
+                (sale.GrandTotal ?? 0) -
+                (sale.RedeemedAmount ?? 0);
+
+            var earned = (int)(Math.Floor(netPaid / 1000) * 10);
+
+            if (earned > 0)
+            {
+                sale.PointsEarned = earned;
+
+                await _loyaltyRepo.AddTransactionAsync(new LoyaltyTransaction
+                {
+                    CustomerId = dto.CustomerId.Value,
+                    SaleId = sale.SaleId,
+                    RefNo = sale.InvoiceNo,
+                    TransactionType = "Earn",
+                    Points = earned,
+                    Description = $"Earned on {sale.InvoiceNo}",
+                    CreatedByUserId = dto.UserId,
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+        }
+
+        // Save loyalty transactions + PointsEarned/PointsRedeemed.
+        await _repo.SaveChangesAsync();
+
+        return new SaleOutDto(
+            sale.SaleId,
+            sale.InvoiceNo,
+            sale.GrandTotal,
+            sale.ChangeAmount,
+            sale.Status
+        );
 
         return new SaleOutDto(sale.SaleId, sale.InvoiceNo, sale.GrandTotal, sale.ChangeAmount, sale.Status);
     }
@@ -164,9 +250,22 @@ public class SaleService : ISaleService
     public async Task<bool> DeleteAsync(int saleId)
     {
         var sale = await _repo.GetByIdAsync(saleId);
-        if (sale is null) return false;
+        if (sale is null)
+            return false;
 
+        // Find loyalty transactions belonging to this sale.
+        var transactions = await _loyaltyRepo.GetBySaleIdAsync(saleId);
+
+        // Remove loyalty transactions first.
+        foreach (var transaction in transactions)
+        {
+            _loyaltyRepo.RemoveTransaction(transaction);
+        }
+
+        // Delete the sale.
         _repo.Delete(sale);
+
+        // Save everything.
         return await _repo.SaveChangesAsync();
     }
 
