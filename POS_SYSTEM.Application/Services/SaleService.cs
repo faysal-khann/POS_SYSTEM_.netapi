@@ -164,8 +164,8 @@ public class SaleService : ISaleService
 
             if (requestedPoints > 0)
             {
-                sale.PointsRedeemed = requestedPoints;
-                sale.RedeemedAmount = requestedPoints;
+                sale.LoyaltyPointsRedeemed = requestedPoints;
+                sale.LoyaltyDiscountAmount = requestedPoints;
 
                 await _loyaltyRepo.AddTransactionAsync(new LoyaltyTransaction
                 {
@@ -188,14 +188,14 @@ public class SaleService : ISaleService
         if (status == "Completed" && dto.CustomerId.HasValue)
         {
             var netPaid =
-                (sale.GrandTotal ?? 0) -
-                (sale.RedeemedAmount ?? 0);
+                (sale.GrandTotal ) -
+                (sale.LoyaltyDiscountAmount );
 
             var earned = (int)(Math.Floor(netPaid / 1000) * 10);
 
             if (earned > 0)
             {
-                sale.PointsEarned = earned;
+                sale.LoyaltyPointsEarned = earned;
 
                 await _loyaltyRepo.AddTransactionAsync(new LoyaltyTransaction
                 {
@@ -317,9 +317,9 @@ public class SaleService : ISaleService
         )).ToList();
     }
 
-    public async Task<DraftSaleDetailDto?> GetDraftSaleDetailAsync(int saleId)
+    public async Task<DraftSaleDetailDto?> GetDraftSaleDetailAsync(int sale_id)
     {
-        var sale = await _repo.GetDraftByIdAsync(saleId);
+        var sale = await _repo.GetDraftByIdAsync(sale_id);
         if (sale is null) return null;
 
         var cashier = await _repo.GetUserByIdAsync(sale.UserId);
@@ -334,7 +334,7 @@ public class SaleService : ISaleService
             sale.Customer?.CustomerName ?? "Walk-in Customer",
             cashier?.FullName ?? "—",
             sale.BranchId, sale.CompanyId,
-            sale.SubTotal ?? 0, sale.DiscountAmount ?? 0, sale.TaxAmount ?? 0, sale.GrandTotal ?? 0,
+            sale.SubTotal , sale.DiscountAmount ?? 0, sale.TaxAmount ?? 0, sale.GrandTotal ,
             items
         );
     }

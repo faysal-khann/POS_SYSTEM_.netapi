@@ -42,7 +42,7 @@ public record DraftSaleListItemDto(int SaleId, string DraftNo, DateTime? SaleDat
 public record SaleItemDraftDetailDto(int ProductId, string ProductName, decimal Qty, decimal UnitPrice, decimal? DiscountPercent, decimal? TaxPercent, decimal LineTotal);
 
 public record DraftSaleDetailDto(
-    int SaleId, string DraftNo, DateTime? SaleDate, int? CustomerId, string CustomerName, string CashierName,
+    int SaleId, string DraftNo, DateTime? SaleDate, int? CustomerID, string CustomerName, string CashierName,
     int BranchId, int CompanyId, decimal SubTotal, decimal DiscountAmount, decimal TaxAmount, decimal GrandTotal,
-    List<SaleItemDraftDetailDto> Items
+    List<SaleItemDraftDetailDto> items
 );

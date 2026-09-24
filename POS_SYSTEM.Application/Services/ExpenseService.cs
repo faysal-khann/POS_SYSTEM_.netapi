@@ -42,7 +42,7 @@ public class ExpenseService : IExpenseService
 
     public async Task<ExpenseSummaryDto> GetSummaryAsync(ExpenseFilterDto filter)
     {
-        var expenses = await _repo.GetFilteredAsync(filter.DateFrom, filter.DateTo, filter.CategoryId, filter.PaymentMethod);
+        var expenses = await _repo.GetFilteredAsync(filter.date_from, filter.date_to, filter.category_id, filter.payment_method);
 
         var total = expenses.Sum(e => e.Amount);
         var count = expenses.Count;
@@ -65,7 +65,7 @@ public class ExpenseService : IExpenseService
 
     public async Task<List<ExpenseListItemDto>> GetExpensesAsync(ExpenseFilterDto filter)
     {
-        var expenses = await _repo.GetFilteredAsync(filter.DateFrom, filter.DateTo, filter.CategoryId, filter.PaymentMethod);
+        var expenses = await _repo.GetFilteredAsync(filter.date_from, filter.date_to, filter.category_id, filter.payment_method);
 
         return expenses.Select(e => new ExpenseListItemDto(
             e.ExpenseId, e.ExpenseNo ?? "—", e.ExpenseDate,
@@ -85,12 +85,12 @@ public class ExpenseService : IExpenseService
             CompanyId = companyId,
             BranchId = branchId,
             ExpenseDate = dto.ExpenseDate,
-            CategoryId = dto.CategoryId,
+            CategoryId = dto.CategoryID,
             Description = dto.Description,
             Amount = dto.Amount,
             PaymentMethod = dto.PaymentMethod,
             ReferenceNo = dto.ReferenceNo,
-            SupplierId = dto.SupplierId,
+            SupplierId = dto.SupplierID,
             Note = dto.Note,
             IsRecurring = dto.IsRecurring,
             Status = string.IsNullOrEmpty(dto.Status) ? "Paid" : dto.Status,

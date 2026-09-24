@@ -45,6 +45,8 @@ public partial class Customer
 
     public DateTime? CreatedAt { get; set; }
 
+    public int LoyaltyPoints { get; set; }
+
     public virtual ICollection<LoyaltyTransaction> LoyaltyTransactions { get; set; } = new List<LoyaltyTransaction>();
 
     public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();

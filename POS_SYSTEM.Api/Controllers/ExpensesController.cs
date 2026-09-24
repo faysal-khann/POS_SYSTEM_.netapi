@@ -5,7 +5,7 @@ using POS_SYSTEM.Application.Interfaces;
 namespace POS_SYSTEM.Api.Controllers;
 
 [ApiController]
-[Route("api/expenses")]
+[Route("expenses")]
 public class ExpensesController : ControllerBase
 {
     private readonly IExpenseService _service;
@@ -38,9 +38,9 @@ public class ExpensesController : ControllerBase
         => Ok(await _service.GetExpensesAsync(filter));
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateExpenseDto dto, [FromQuery] int createdBy, [FromQuery] int branchId, [FromQuery] int companyId)
+    public async Task<IActionResult> Create(CreateExpenseDto dto, [FromQuery] int created_by, [FromQuery] int branch_id, [FromQuery] int company_id)
     {
-        var (id, no) = await _service.CreateAsync(dto, createdBy, branchId, companyId);
+        var (id, no) = await _service.CreateAsync(dto, created_by, branch_id, company_id);
         return Ok(new { ExpenseID = id, ExpenseNo = no });
     }
 

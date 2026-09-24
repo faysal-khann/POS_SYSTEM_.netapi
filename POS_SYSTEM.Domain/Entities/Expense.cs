@@ -33,7 +33,7 @@ public partial class Expense
 
     public DateTime? CreatedAt { get; set; }
 
-    public string? ExpenseNo { get; set; }
+    public string ExpenseNo { get; set; } = null!;
 
     public string Status { get; set; } = null!;
 

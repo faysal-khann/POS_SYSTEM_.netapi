@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using POS_SYSTEM.Infrastructure.Persistence.Entities;
+using POS_SYSTEM.Domain.Entities;
 
 namespace POS_SYSTEM.Infrastructure.Persistence;
 
@@ -617,7 +617,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.GrandTotal).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.InvoiceNo).HasMaxLength(30);
-            entity.Property(e => e.LoyaltyDiscountAmount).HasColumnType("decimal(18, 2)");
+            //entity.Property(e => e.LoyaltyDiscountAmount).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.ParkName).HasMaxLength(100);
             entity.Property(e => e.PaymentMethod).HasMaxLength(20);
             entity.Property(e => e.PaymentStatus)
