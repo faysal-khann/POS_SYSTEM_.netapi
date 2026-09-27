@@ -19,7 +19,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = new PascalCaseIdNamingPolicy();
     });
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -88,7 +89,7 @@ var app = builder.Build();
 // Middleware pipeline — order matters
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();       // serves /openapi/v1.json
+ 
     app.UseSwagger();       // serves /swagger/v1/swagger.json
     app.UseSwaggerUI();     // serves the interactive page at /swagger
 }

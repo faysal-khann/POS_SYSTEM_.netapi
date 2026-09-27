@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using POS_SYSTEM.Domain.Entities;
@@ -117,7 +117,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Action).HasMaxLength(50);
             entity.Property(e => e.CreatedAt)
                 .HasPrecision(3)
-                .HasDefaultValueSql("(sysutcdatetime())", "DF_ActivityLogs_CreatedAt");
+                .HasDefaultValueSql("(sysutcdatetime())");
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.Ipaddress)
                 .HasMaxLength(50)
@@ -925,3 +925,6 @@ public partial class AppDbContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+
+
+
