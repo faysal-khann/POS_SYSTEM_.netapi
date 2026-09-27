@@ -25,4 +25,8 @@
     <ProjectReference Include="..\POS_SYSTEM.Infrastructure\POS_SYSTEM.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="uploads\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
