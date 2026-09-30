@@ -36,10 +36,10 @@ namespace POS_SYSTEM.Api.Controllers
             return Ok(new LogoUploadResultDto($"/uploads/companies/{filename}"));
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetDetail(int id)
+        [HttpGet("{company_id:int}")]
+        public async Task<IActionResult> GetDetail(int company_id)
         {
-            var detail = await _service.GetDetailAsync(id);
+            var detail = await _service.GetDetailAsync(company_id);
             return detail is null ? NotFound(new { detail = "Company not found" }) : Ok(detail);
         }
 
@@ -50,17 +50,17 @@ namespace POS_SYSTEM.Api.Controllers
             return CreatedAtAction(nameof(GetDetail), new { id = created.CompanyId }, created);
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, CompanyCreateDto dto)
+        [HttpPut("{company_id:int}")]
+        public async Task<IActionResult> Update(int company_id, CompanyCreateDto dto)
         {
-            var updated = await _service.UpdateAsync(id, dto);
+            var updated = await _service.UpdateAsync(company_id, dto);
             return updated is null ? NotFound(new { detail = "Company not found" }) : Ok(updated);
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("{company_id:int}")]
+        public async Task<IActionResult> Delete(int company_id)
         {
-            var success = await _service.DeleteAsync(id);
+            var success = await _service.DeleteAsync(company_id);
             return success ? Ok(new { message = "Company deleted successfully" }) : NotFound(new { detail = "Company not found" });
         }
     }

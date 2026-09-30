@@ -16,10 +16,10 @@ public class BranchesController : ControllerBase
     public async Task<ActionResult<List<BranchListItemDto>>> GetAll([FromQuery] string? search) =>
         Ok(await _service.GetBranchesAsync(search));
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetDetail(int id)
+    [HttpGet("{branch_id:int}")]
+    public async Task<IActionResult> GetDetail(int branch_id)
     {
-        var detail = await _service.GetDetailAsync(id);
+        var detail = await _service.GetDetailAsync(branch_id);
         return detail is null ? NotFound(new { detail = "Branch not found" }) : Ok(detail);
     }
 
@@ -30,17 +30,17 @@ public class BranchesController : ControllerBase
         return CreatedAtAction(nameof(GetDetail), new { id = created.BranchId }, created);
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, BranchUpdateDto dto)
+    [HttpPut("{branch_id:int}")]
+    public async Task<IActionResult> Update(int branch_id, BranchUpdateDto dto)
     {
-        var updated = await _service.UpdateAsync(id, dto);
+        var updated = await _service.UpdateAsync(branch_id, dto);
         return updated is null ? NotFound(new { detail = "Branch not found" }) : Ok(updated);
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{branch_id:int}")]
+    public async Task<IActionResult> Delete(int branch_id)
     {
-        var success = await _service.DeleteAsync(id);
+        var success = await _service.DeleteAsync(branch_id);
         return success ? Ok(new { message = "Branch deleted successfully" }) : NotFound(new { detail = "Branch not found" });
     }
 }

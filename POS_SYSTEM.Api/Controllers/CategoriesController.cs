@@ -15,10 +15,10 @@ public class CategoriesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<CategoryOutDto>>> GetAll() => Ok(await _service.GetAllAsync());
 
-    [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpGet("{category_id:int}")]
+    public async Task<IActionResult> GetById(int category_id)
     {
-        var category = await _service.GetByIdAsync(id);
+        var category = await _service.GetByIdAsync(category_id);
         return category is null ? NotFound(new { detail = "Category not found" }) : Ok(category);
     }
 
@@ -29,17 +29,17 @@ public class CategoriesController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.CategoryId }, created);
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, CategoryUpdateDto dto)
+    [HttpPut("{category_id:int}")]
+    public async Task<IActionResult> Update(int category_id, CategoryUpdateDto dto)
     {
-        var updated = await _service.UpdateAsync(id, dto);
+        var updated = await _service.UpdateAsync(category_id, dto);
         return updated is null ? NotFound(new { detail = "Category not found" }) : Ok(updated);
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{category_id:int}")]
+    public async Task<IActionResult> Delete(int category_id)
     {
-        var success = await _service.DeleteAsync(id);
+        var success = await _service.DeleteAsync(category_id);
         return success ? Ok(new { message = "Category deleted successfully" }) : NotFound(new { detail = "Category not found" });
     }
 }

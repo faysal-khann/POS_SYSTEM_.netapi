@@ -20,10 +20,10 @@ namespace POS_SYSTEM.Api.Controllers
         public async Task<ActionResult<List<CustomerOutDto>>> GetAll() =>
             Ok(await _service.GetAllAsync());
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<CustomerOutDto>> GetById(int id)
+        [HttpGet("{customer_id:int}")]
+        public async Task<ActionResult<CustomerOutDto>> GetById(int customer_id)
         {
-            var customer = await _service.GetByIdAsync(id);
+            var customer = await _service.GetByIdAsync(customer_id);
             return customer is null ? NotFound(new { detail = "Customer not found" }) : Ok(customer);
         }
 
@@ -34,17 +34,17 @@ namespace POS_SYSTEM.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.CustomerId }, created);
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<CustomerOutDto>> Update(int id, CustomerUpdateDto dto)
+        [HttpPut("{customer_id:int}")]
+        public async Task<ActionResult<CustomerOutDto>> Update(int customer_id, CustomerUpdateDto dto)
         {
-            var updated = await _service.UpdateAsync(id, dto);
+            var updated = await _service.UpdateAsync(customer_id, dto);
             return updated is null ? NotFound(new { detail = "Customer not found" }) : Ok(updated);
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        [HttpDelete("{customer_id:int}")]
+        public async Task<IActionResult> Delete(int customer_id)
         {
-            var success = await _service.DeleteAsync(id);
+            var success = await _service.DeleteAsync(customer_id);
             return success ? Ok(new { message = "Customer deleted successfully" }) : NotFound(new { detail = "Customer not found" });
         }
     }
