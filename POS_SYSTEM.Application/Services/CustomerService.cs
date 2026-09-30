@@ -92,9 +92,9 @@ namespace POS_SYSTEM.Application.Services
             return MapToDto(customer);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int customer_id)
         {
-            var customer = await _repo.GetByIdAsync(id);
+            var customer = await _repo.GetByIdAsync(customer_id);
             if (customer is null) return false;
 
             _repo.Delete(customer);
