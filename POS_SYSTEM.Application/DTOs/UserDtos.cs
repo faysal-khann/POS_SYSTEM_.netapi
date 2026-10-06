@@ -14,7 +14,7 @@ namespace POS_SYSTEM.Application.DTOs
     DateTime? LastLoginAt
 );
 
-    public record PermissionNodeDto(int Id, string Name, List<PermissionNodeDto> Children);
+    public record PermissionNodeDto(int id, string name, List<PermissionNodeDto> children);
 
     public record UserCreateDto(
         string FullName,

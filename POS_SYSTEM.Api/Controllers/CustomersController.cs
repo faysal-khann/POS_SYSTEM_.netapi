@@ -31,7 +31,7 @@ namespace POS_SYSTEM.Api.Controllers
         public async Task<ActionResult<CustomerOutDto>> Create(CustomerCreateDto dto)
         {
             var created = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.CustomerId }, created);
+            return CreatedAtAction(nameof(GetById), new { customer_id = created.CustomerId }, created);
         }
 
         [HttpPut("{customer_id:int}")]
