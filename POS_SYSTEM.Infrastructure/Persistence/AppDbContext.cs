@@ -439,6 +439,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.ProductName).HasMaxLength(150);
             entity.Property(e => e.PurchasePrice).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.SalePrice).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.WholesalePrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .HasDefaultValue("Active");

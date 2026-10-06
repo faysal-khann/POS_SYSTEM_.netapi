@@ -123,17 +123,12 @@ namespace POS_SYSTEM.Application.Services
         public async Task<List<PermissionNodeDto>> GetPermissionTreeAsync()
         {
             var perms = await _repo.GetActivePermissionsOrderedAsync();
-            var byParent = perms
-                .GroupBy(p => p.ParentPermissionId)
-                .ToDictionary(g => g.Key, g => g.ToList());
+            var byParent = perms.ToLookup(p => p.ParentPermissionId);
 
-            List<PermissionNodeDto> Build(int? parentId)
-            {
-                if (!byParent.TryGetValue(parentId, out var children)) return new List<PermissionNodeDto>();
-                return children
+            List<PermissionNodeDto> Build(int? parentId) =>
+                byParent[parentId]
                     .Select(p => new PermissionNodeDto(p.PermissionId, p.PermissionName, Build(p.PermissionId)))
                     .ToList();
-            }
 
             return Build(null);
         }

@@ -15,7 +15,7 @@ public record SaleLookupResultDto(
     string CustomerName,
     int BranchID,
     int CompanyID,
-    List<ReturnableItemDto> Items
+    List<ReturnableItemDto> items
 );
 
 public record SaleReturnItemInputDto(

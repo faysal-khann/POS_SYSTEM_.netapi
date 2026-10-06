@@ -27,7 +27,7 @@ public class BranchesController : ControllerBase
     public async Task<ActionResult<BranchDetailDto>> Create(BranchCreateDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetDetail), new { id = created.BranchId }, created);
+        return CreatedAtAction(nameof(GetDetail), new { branch_id = created.BranchId }, created);
     }
 
     [HttpPut("{branch_id:int}")]

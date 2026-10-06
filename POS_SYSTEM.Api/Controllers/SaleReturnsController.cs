@@ -5,7 +5,7 @@ using POS_SYSTEM.Application.Interfaces;
 namespace POS_SYSTEM.Api.Controllers;
 
 [ApiController]
-[Route("api/sale-returns")]
+[Route("sale-returns")]
 public class SaleReturnsController : ControllerBase
 {
     private readonly ISaleReturnService _saleReturnService;
@@ -15,12 +15,12 @@ public class SaleReturnsController : ControllerBase
         _saleReturnService = saleReturnService;
     }
 
-    [HttpGet("lookup/{invoiceNo}")]
-    public async Task<ActionResult<SaleLookupResultDto>> LookupSale(string invoiceNo)
+    [HttpGet("lookup/{invoice_no}")]
+    public async Task<ActionResult<SaleLookupResultDto>> LookupSale(string invoice_no)
     {
         try
         {
-            var result = await _saleReturnService.LookupSaleAsync(invoiceNo);
+            var result = await _saleReturnService.LookupSaleAsync(invoice_no);
             return Ok(result);
         }
         catch (KeyNotFoundException ex)

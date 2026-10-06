@@ -26,7 +26,7 @@ public class BrandsController : ControllerBase
     public async Task<ActionResult<BrandOutDto>> Create(BrandCreateDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.BrandId }, created);
+        return CreatedAtAction(nameof(GetById), new { brand_id = created.BrandId }, created);
     }
 
     [HttpPut("{brand_id:int}")]
