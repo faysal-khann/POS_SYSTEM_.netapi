@@ -55,7 +55,7 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<ProductOutDto>> Create(ProductCreateDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.ProductId }, created);
+        return CreatedAtAction(nameof(GetById), new { product_id = created.ProductId }, created);
     }
 
     [HttpPut("{product_id:int}")]
