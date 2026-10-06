@@ -17,8 +17,8 @@ public class ProductRepository : IProductRepository
     public async Task<List<Product>> GetAllAsync() =>
         await WithIncludes().AsNoTracking().ToListAsync();
 
-    public async Task<Product?> GetByIdAsync(int id) =>
-        await WithIncludes().FirstOrDefaultAsync(p => p.ProductId == id);
+    public async Task<Product?> GetByIdAsync(int product_id) =>
+        await WithIncludes().FirstOrDefaultAsync(p => p.ProductId == product_id);
 
     public async Task<Product?> GetByBarcodeAsync(string barcode) =>
         await WithIncludes().FirstOrDefaultAsync(p => p.Barcode == barcode);
