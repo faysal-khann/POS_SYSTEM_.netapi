@@ -103,9 +103,9 @@ public class ProductService : IProductService
         return MapToDto(saved!);
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int product_id)
     {
-        var product = await _repo.GetByIdAsync(id);
+        var product = await _repo.GetByIdAsync(product_id);
         if (product is null) return false;
 
         _repo.Delete(product);
