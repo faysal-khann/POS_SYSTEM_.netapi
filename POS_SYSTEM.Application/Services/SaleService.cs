@@ -38,7 +38,30 @@ public class SaleService : ISaleService
 
         return $"{prefix}{seq:D4}";
     }
+    public async Task<SaleDetailDto?> GetSaleDetailAsync(int saleId)
+    {
+        var sale = await _repo.GetByIdForDetailAsync(saleId);
+        if (sale is null) return null;
 
+        var cashier = await _repo.GetUserByIdAsync(sale.UserId);
+
+        var items = sale.SaleItems.Select(i => new SaleDetailItemDto(
+            i.ProductId, i.Product?.ProductName ?? "—", i.Qty, i.UnitPrice,
+            i.DiscountPercent ?? 0, i.TaxPercent ?? 0, i.LineTotal
+        )).ToList();
+
+        return new SaleDetailDto(
+            sale.SaleId, sale.InvoiceNo, sale.SaleDate, sale.CustomerId,
+            sale.Customer?.CustomerName ?? "Walk-in Customer",
+            sale.Customer?.Phone,
+            cashier?.FullName ?? "—",
+            sale.BranchId, sale.CompanyId, sale.PriceType,
+            sale.SubTotal, sale.DiscountAmount ?? 0, sale.LoyaltyDiscountAmount, sale.TaxAmount ?? 0,
+            sale.GrandTotal, sale.PaymentMethod, sale.PaymentStatus,
+            sale.ReceivedAmount ?? 0, sale.ChangeAmount ?? 0, sale.Status,
+            items
+        );
+    }
     public async Task<string> GetNextInvoiceNoAsync() => await GenerateInvoiceNoAsync();
 
     public async Task<List<LookupDto>> GetCashiersListAsync()

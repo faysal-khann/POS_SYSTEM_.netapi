@@ -59,6 +59,13 @@ public class SalesController : ControllerBase
         catch (BadRequestAppException ex) { return BadRequest(new { detail = ex.Message }); }
     }
 
+    [HttpGet("{saleId:int}")]
+    public async Task<IActionResult> GetSaleDetail(int saleId)
+    {
+        var detail = await _service.GetSaleDetailAsync(saleId);
+        return detail is null ? NotFound(new { detail = "Sale not found" }) : Ok(detail);
+    }
+
     [HttpDelete("{saleId:int}")]
     public async Task<IActionResult> Delete(int saleId)
     {

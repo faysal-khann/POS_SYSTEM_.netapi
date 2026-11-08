@@ -105,6 +105,12 @@ public class SaleRepository : ISaleRepository
             .OrderByDescending(s => s.SaleDate)
             .ToListAsync();
 
+    public async Task<Sale?> GetByIdForDetailAsync(int saleId) =>
+    await _context.Sales
+        .Include(s => s.SaleItems).ThenInclude(i => i.Product)
+        .Include(s => s.Customer)
+        .FirstOrDefaultAsync(s => s.SaleId == saleId);
+
     public async Task<ProductStock?> GetStockAsync(int productId, int branchId) =>
         await _context.ProductStocks.FirstOrDefaultAsync(s => s.ProductId == productId && s.BranchId == branchId);
 

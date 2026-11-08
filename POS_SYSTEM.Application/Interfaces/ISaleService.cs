@@ -7,7 +7,7 @@ public interface ISaleService
     Task<string> GetNextInvoiceNoAsync();
     Task<List<LookupDto>> GetCashiersListAsync();
     Task<List<LookupDto>> GetCashiersAsync();
-
+    Task<SaleDetailDto?> GetSaleDetailAsync(int saleId);
     Task<SaleOutDto> CreateAsync(SaleCreateDto dto);
     Task<List<SaleListItemDto>> GetSalesAsync(DateOnly? dateFrom, DateOnly? dateTo, int? customerId, int? cashierId, string? paymentStatus);
     Task<bool> DeleteAsync(int saleId);
