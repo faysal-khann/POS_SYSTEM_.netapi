@@ -44,10 +44,10 @@ public class ProductsController : ControllerBase
         return product is null ? NotFound(new { detail = "Product not found for this barcode" }) : Ok(product);
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<ProductOutDto>> GetById(int id)
+    [HttpGet("{product_id:int}")]
+    public async Task<ActionResult<ProductOutDto>> GetById(int product_id)
     {
-        var product = await _service.GetByIdAsync(id);
+        var product = await _service.GetByIdAsync(product_id);
         return product is null ? NotFound(new { detail = "Product not found" }) : Ok(product);
     }
 
@@ -55,20 +55,20 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<ProductOutDto>> Create(ProductCreateDto dto)
     {
         var created = await _service.CreateAsync(dto);
-        return CreatedAtAction(nameof(GetById), new { id = created.ProductId }, created);
+        return CreatedAtAction(nameof(GetById), new { product_id = created.ProductId }, created);
     }
 
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<ProductOutDto>> Update(int id, ProductUpdateDto dto)
+    [HttpPut("{product_id:int}")]
+    public async Task<ActionResult<ProductOutDto>> Update(int product_id, ProductUpdateDto dto)
     {
-        var updated = await _service.UpdateAsync(id, dto);
+        var updated = await _service.UpdateAsync(product_id, dto);
         return updated is null ? NotFound(new { detail = "Product not found" }) : Ok(updated);
     }
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
+    [HttpDelete("{product_id:int}")]
+    public async Task<IActionResult> Delete(int product_id)
     {
-        var success = await _service.DeleteAsync(id);
+        var success = await _service.DeleteAsync(product_id);
         return success ? Ok(new { message = "Product deleted successfully" }) : NotFound(new { detail = "Product not found" });
     }
 
@@ -89,12 +89,12 @@ public class ProductsController : ControllerBase
         }
     }
 
-    [HttpPut("{id:int}/price")]
-    public async Task<IActionResult> UpdatePrice(int id, UpdatePriceDto dto)
+    [HttpPut("{product_id:int}/price")]
+    public async Task<IActionResult> UpdatePrice(int product_id, UpdatePriceDto dto)
     {
         try
         {
-            var updated = await _service.UpdatePriceAsync(id, dto.SalePrice);
+            var updated = await _service.UpdatePriceAsync(product_id, dto.SalePrice);
             if (updated is null) return NotFound(new { detail = "Product not found" });
 
             return Ok(new { message = "Price updated successfully", ProductId = updated.ProductId, updated.SalePrice });

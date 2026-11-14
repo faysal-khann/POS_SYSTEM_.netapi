@@ -46,3 +46,14 @@ public record DraftSaleDetailDto(
     int BranchId, int CompanyId, decimal SubTotal, decimal DiscountAmount, decimal TaxAmount, decimal GrandTotal,
     List<SaleItemDraftDetailDto> items
 );
+
+public record SaleDetailItemDto(
+    int ProductId, string ProductName, decimal Qty, decimal UnitPrice,
+    decimal? DiscountPercent, decimal? TaxPercent, decimal LineTotal);
+
+public record SaleDetailDto(
+    int SaleId, string InvoiceNo, DateTime? SaleDate, int? CustomerID, string CustomerName,
+    string? CustomerPhone, string CashierName, int BranchId, int CompanyId, string? PriceType,
+    decimal SubTotal, decimal DiscountAmount, decimal LoyaltyDiscountAmount, decimal TaxAmount,
+    decimal GrandTotal, string? PaymentMethod, string PaymentStatus, decimal ReceivedAmount,
+    decimal ChangeAmount, string Status, List<SaleDetailItemDto> items);

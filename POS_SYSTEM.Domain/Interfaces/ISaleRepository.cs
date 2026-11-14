@@ -23,7 +23,7 @@ public interface ISaleRepository
     Task<Sale?> GetHeldByIdAsync(int saleId);
     Task<Sale?> GetDraftByIdAsync(int saleId);
     Task<List<Sale>> GetByStatusAsync(string status);
-
+    Task<Sale?> GetByIdForDetailAsync(int saleId);
     Task<ProductStock?> GetStockAsync(int productId, int branchId);
     Task AddStockAsync(ProductStock stock);
     Task AddStockMovementAsync(StockMovement movement);

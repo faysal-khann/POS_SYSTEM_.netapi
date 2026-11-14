@@ -22,6 +22,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(p => p.PurchasePrice).HasColumnType("decimal(10,2)");
         builder.Property(p => p.SalePrice).HasColumnType("decimal(10,2)");
+        builder.Property(p => p.WholesalePrice).HasColumnType("decimal(18,2)");
         builder.Property(p => p.TaxPercent).HasColumnType("decimal(5,2)");
 
         builder.HasOne(p => p.Category)

@@ -86,18 +86,17 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
+Directory.CreateDirectory(uploadsPath);
+
 // Middleware pipeline — order matters
-if (app.Environment.IsDevelopment())
-{
- 
-    app.UseSwagger();       // serves /swagger/v1/swagger.json
-    app.UseSwaggerUI();     // serves the interactive page at /swagger
-}
+app.UseSwagger();       // serves /swagger/v1/swagger.json
+app.UseSwaggerUI();     // serves the interactive page at /swagger
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "uploads")),
+    FileProvider = new PhysicalFileProvider(uploadsPath),
     RequestPath = "/uploads"
 });
 app.UseAuthentication();

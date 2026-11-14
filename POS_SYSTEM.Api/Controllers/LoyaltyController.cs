@@ -2,6 +2,7 @@
 using POS_SYSTEM.Application.DTOs;
 using POS_SYSTEM.Application.Exceptions;
 using POS_SYSTEM.Application.Interfaces;
+using POS_SYSTEM.Domain.Entities;
 
 namespace POS_SYSTEM.Api.Controllers;
 
@@ -16,13 +17,13 @@ public class LoyaltyController : ControllerBase
     [HttpGet("summary")]
     public async Task<IActionResult> GetSummary() => Ok(await _service.GetSummaryAsync());
 
-    [HttpGet("summary/{customerId:int}")]
-    public async Task<IActionResult> GetCustomerPoints(int customerId) =>
-        Ok(new { availablePoints = await _service.GetAvailablePointsAsync(customerId) });
+    [HttpGet("summary/{customer_id:int}")]
+    public async Task<IActionResult> GetCustomerPoints(int customer_id) =>
+        Ok(new { availablePoints = await _service.GetAvailablePointsAsync(customer_id) });
 
-    [HttpGet("history/{customerId:int}")]
-    public async Task<IActionResult> GetHistory(int customerId) =>
-        Ok(await _service.GetHistoryAsync(customerId));
+    [HttpGet("history/{customer_id:int}")]
+    public async Task<IActionResult> GetHistory(int customer_id) =>
+        Ok(await _service.GetHistoryAsync(customer_id));
 
     [HttpPost("adjust")]
     public async Task<IActionResult> Adjust(LoyaltyAdjustDto dto)

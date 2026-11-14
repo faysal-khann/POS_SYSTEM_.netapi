@@ -23,6 +23,8 @@ public partial class Product
 
     public decimal SalePrice { get; set; }
 
+    public decimal? WholesalePrice { get; set; }
+
     public decimal TaxPercent { get; set; }
 
     public int OpeningStock { get; set; }

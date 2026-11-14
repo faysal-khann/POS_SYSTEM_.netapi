@@ -58,6 +58,7 @@ public class ProductService : IProductService
             UnitId = dto.UnitId,
             PurchasePrice = dto.PurchasePrice,
             SalePrice = dto.SalePrice,
+            WholesalePrice = dto.WholesalePrice,
             TaxPercent = dto.TaxPercent,
             OpeningStock = dto.OpeningStock,
             ReorderLevel = dto.ReorderLevel,
@@ -88,6 +89,7 @@ public class ProductService : IProductService
         product.UnitId = dto.UnitId;
         product.PurchasePrice = dto.PurchasePrice;
         product.SalePrice = dto.SalePrice;
+        product.WholesalePrice = dto.WholesalePrice;
         product.TaxPercent = dto.TaxPercent;
         product.OpeningStock = dto.OpeningStock;
         product.ReorderLevel = dto.ReorderLevel;
@@ -103,9 +105,9 @@ public class ProductService : IProductService
         return MapToDto(saved!);
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int product_id)
     {
-        var product = await _repo.GetByIdAsync(id);
+        var product = await _repo.GetByIdAsync(product_id);
         if (product is null) return false;
 
         _repo.Delete(product);
@@ -166,7 +168,7 @@ public class ProductService : IProductService
     private static ProductOutDto MapToDto(Product p) => new(
         p.ProductId, p.ProductCode, p.ProductName, p.Barcode,
         p.CategoryId, p.BrandId, p.UnitId,
-        p.PurchasePrice, p.SalePrice, p.TaxPercent,
+        p.PurchasePrice, p.SalePrice, p.WholesalePrice, p.TaxPercent,
         p.OpeningStock, p.ReorderLevel, p.CurrentStock,
         p.ImageUrl, p.Status, p.Description, p.CreatedAt,
         p.Category?.CategoryName, p.Brand?.BrandName
