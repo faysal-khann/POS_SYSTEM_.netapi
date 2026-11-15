@@ -93,7 +93,7 @@ public partial class AppDbContext : DbContext
 
             entity.Property(e => e.LogId).HasColumnName("LogID");
             entity.Property(e => e.ActionType).HasMaxLength(20);
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("(sysutcdatetime())", "DF_ActivityLogs_CreatedAt");
             entity.Property(e => e.Description).HasMaxLength(255);
             entity.Property(e => e.Ipaddress)
                 .HasMaxLength(45)

@@ -19,8 +19,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.PropertyNamingPolicy = new PascalCaseIdNamingPolicy();
     });
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -86,14 +85,17 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-var uploadsPath = Path.Combine(app.Environment.ContentRootPath, "uploads");
-Directory.CreateDirectory(uploadsPath);
-
 // Middleware pipeline — order matters
-app.UseSwagger();       // serves /swagger/v1/swagger.json
-app.UseSwaggerUI();     // serves the interactive page at /swagger
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();       // serves /openapi/v1.json
+    app.UseSwagger();       // serves /swagger/v1/swagger.json
+    app.UseSwaggerUI(o => o.SwaggerEndpoint("/openapi/v1.json", "POS API v1"));
+}
 
 app.UseHttpsRedirection();
+var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "uploads");
+Directory.CreateDirectory(uploadsPath);
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadsPath),
