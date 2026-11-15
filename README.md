@@ -31,8 +31,19 @@ A multi-company, multi-branch **Point-of-Sale backend** built with **.NET 10**, 
 
 ## 1. Project Overview
 
-`POS_SYSTEM` is the REST API behind a retail point-of-sale app. A business can run one or more **companies**, each with several **branches**, and manage selling, returns, purchasing, stock, loyalty points, expenses, cashier shifts, and users with role-based permissions.
-
+`POS_SYSTEM` is the REST API behind a retail point-of-sale application. It lets a business that operates one or more **companies**, each with one or more **branches**, manage the full retail cycle:
+ 
+- sell products at the till (completed, **held/parked** and **draft** sales),
+- take returns against an existing invoice,
+- buy stock from suppliers,
+- track per-branch stock levels and every stock movement,
+- reward customers with loyalty points,
+- record expenses and close cashier shifts,
+- administer users, roles and fine-grained permissions.
+The solution is split into four projects that follow Clean Architecture: a dependency-free **Domain**, an **Application** layer holding business logic and DTOs, an **Infrastructure** layer holding EF Core and repository implementations, and an **Api** layer exposing HTTP endpoints.
+ 
+> The API surface was ported from an earlier FastAPI implementation (visible in code comments). The JSON contract (property names such as `CategoryID`, the `detail` error key, snake_case route parameters) was deliberately kept compatible with the existing client — see [JSON conventions](#json-conventions).
+ 
 ---
 
 ## 2. Features
@@ -96,29 +107,48 @@ Dependency injection is set up in `Program.cs` (`AddScoped` for each service and
 
 ## 5. Project Structure
 
+`bin/` and `obj/` are omitted.
+ 
 ```text
 POS_SYSTEM/
-├── POS_SYSTEM.slnx
-├── POS_SYSTEM.Api/              # Presentation layer
-│   ├── Program.cs               # DI, JWT, EF Core, middleware
-│   ├── appsettings.json
-│   ├── Controllers/             # One controller per feature
-│   └── Serialization/           # PascalCaseIdNamingPolicy
-├── POS_SYSTEM.Application/      # Business layer
-│   ├── Interfaces/              # I*Service
-│   ├── Services/                # Business rules
-│   ├── DTOs/                    # Request/response records
-│   └── Exceptions/              # AppException types
-├── POS_SYSTEM.Domain/           # Core (no dependencies)
-│   ├── Entities/
-│   └── Interfaces/              # I*Repository
-└── POS_SYSTEM.Infrastructure/   # Data access
-    ├── Persistence/AppDbContext.cs
-    └── Repositories/            # *Repository implementations
+├── POS_SYSTEM.slnx                         # Solution file (4 projects)
+├── README.md
+│
+├── POS_SYSTEM.Api/                         # Presentation layer (ASP.NET Core Web API)
+│   ├── Program.cs                          # DI registrations, JWT, EF Core, middleware pipeline
+│   ├── appsettings.json                    # Base configuration (connection string key, Jwt, Logging)
+│   ├── appsettings.Development.json        # Development logging overrides
+│   ├── Controllers/                        # 20 controllers, one per feature area
+│   │   ├── AuthController.cs
+│   │   ├── BranchesController.cs · BrandsController.cs · CategoriesController.cs
+│   │   ├── CashierShiftsController.cs · CompaniesController.cs · CustomersController.cs
+│   │   ├── ExpensesController.cs · LoyaltyController.cs · PermissionsController.cs
+│   │   ├── ProductsController.cs · PurchasesController.cs · RolesController.cs
+│   │   ├── SaleReturnsController.cs · SalesController.cs · StockController.cs
+│   │   ├── SuppliersController.cs · UnitsController.cs · UsersController.cs
+│   │   └── WeatherForecastController.cs    # Default project-template sample
+│   └── Serialization/
+│       └── PascalCaseIdNamingPolicy.cs     # Custom JSON naming policy (…Id → …ID)
+│
+├── POS_SYSTEM.Application/                 # Application / business layer
+│   ├── Interfaces/                         # I*Service contracts (19)
+│   ├── Services/                           # *Service implementations – business rules
+│   ├── DTOs/                               # Request/response records, grouped per feature
+│   └── Exceptions/
+│       └── AuthExceptions.cs               # Unauthorized/Forbidden/NotFound/BadRequest AppException
+│
+├── POS_SYSTEM.Domain/                      # Enterprise core – no dependencies
+│   ├── Entities/                           # 28 entity classes mapped to SQL tables
+│   └── Interfaces/                         # I*Repository contracts (19)
+│
+└── POS_SYSTEM.Infrastructure/              # Data-access layer
+    ├── Persistence/
+    │   ├── AppDbContext.cs                 # DbSets + Fluent API mapping (OnModelCreating)
+    │   └── Configurations/                 # IEntityTypeConfiguration<T> classes (see Known Limitations)
+    └── Repositories/                       # *Repository implementations (19)
 ```
-
+ 
 ---
-
 ## 6. Database
 
 - **Engine:** SQL Server (Azure SQL Database in production), accessed with EF Core through `AppDbContext`.
