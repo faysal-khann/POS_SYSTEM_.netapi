@@ -1,5 +1,5 @@
 # POS_SYSTEM(Backend)
-**Frontend repository:** [POS System Frontend](https://github.com/faysal-khann/POS-SYSTEM.git)
+
 
 A multi-company, multi-branch **Point-of-Sale backend** built with **.NET 10**, **ASP.NET Core Web API**, **Entity Framework Core** and **Microsoft SQL Server**, structured using **Clean Architecture** and the **Repository Pattern**. The production database runs on **Azure SQL Database** and the API is hosted on **Microsoft Azure**.
 
@@ -10,7 +10,7 @@ A multi-company, multi-branch **Point-of-Sale backend** built with **.NET 10**, 
 ![Azure](https://img.shields.io/badge/Cloud-Microsoft%20Azure-0078D4?logo=microsoftazure)
 
 ---
-
+**Frontend repository:** [POS System Frontend](https://github.com/faysal-khann/POS-SYSTEM.git)
 ## Table of Contents
 
 1. [Project Overview](#1-project-overview)
